@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mkdir:*)",
+      "Bash(npm run build:*)",
+      "Bash(npm install:*)",
+      "Bash(npx prettier:*)",
+      "Bash(npm run format:*)"
+    ],
+    "deny": []
+  }
+}
