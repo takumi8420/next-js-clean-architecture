@@ -5,7 +5,9 @@
       "Bash(npm run build:*)",
       "Bash(npm install:*)",
       "Bash(npx prettier:*)",
-      "Bash(npm run format:*)"
+      "Bash(npm run format:*)",
+      "Bash(npm test:*)",
+      "Bash(npm run test:coverage:*)"
     ],
     "deny": []
   }

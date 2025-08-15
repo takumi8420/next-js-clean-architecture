@@ -44,7 +44,7 @@ export class Message {
     if (!content || content.trim().length === 0) {
       throw new Error('Message content cannot be empty');
     }
-    this._content = content;
+    this._content = content.trim();
     this._updatedAt = now;
   }
 
