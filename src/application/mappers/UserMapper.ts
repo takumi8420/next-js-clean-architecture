@@ -10,6 +10,7 @@ export class UserMapper {
       email: user.email.toString(),
       name: user.name,
       status: user.status,
+      createdAt: user.createdAt.toISOString(),
     };
   }
 
@@ -19,6 +20,7 @@ export class UserMapper {
       new Email(dto.email),
       dto.name,
       dto.status as UserStatus,
+      new Date(dto.createdAt),
     );
   }
 }

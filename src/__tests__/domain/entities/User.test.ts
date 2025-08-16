@@ -1,10 +1,17 @@
 import { User } from '@/domain/entities/User';
 import { Email } from '@/domain/valueObjects/Email';
 import { toUserId } from '@/domain/valueObjects/UserId';
+import { ValidationError } from '@/domain/errors/ValidationError';
 
 describe('User', () => {
   const createUser = () => {
-    return new User(toUserId('user-1'), new Email('test@example.com'), 'Test User', 'online');
+    return new User(
+      toUserId('user-1'),
+      new Email('test@example.com'),
+      'Test User',
+      'online',
+      new Date(),
+    );
   };
 
   describe('constructor', () => {
@@ -29,8 +36,10 @@ describe('User', () => {
     it('should throw error for empty name', () => {
       const user = createUser();
 
-      expect(() => user.updateName('')).toThrow('Name cannot be empty');
-      expect(() => user.updateName('   ')).toThrow('Name cannot be empty');
+      expect(() => user.updateName('')).toThrow(ValidationError);
+      expect(() => user.updateName('')).toThrow('name: cannot be empty');
+      expect(() => user.updateName('   ')).toThrow(ValidationError);
+      expect(() => user.updateName('   ')).toThrow('name: cannot be empty');
     });
   });
 

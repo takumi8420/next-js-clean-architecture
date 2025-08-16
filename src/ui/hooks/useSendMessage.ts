@@ -1,8 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import { MessageDto } from '@/application/dto/MessageDto';
+
 import { sendMessage as sendMessageAction } from '@/app/actions/messages';
+import { MessageDto } from '@/application/dto/MessageDto';
 
 export const useSendMessage = () => {
   const [sending, setSending] = useState(false);

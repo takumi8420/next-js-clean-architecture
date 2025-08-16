@@ -3,4 +3,5 @@ export interface UserDto {
   email: string;
   name: string;
   status: 'online' | 'away' | 'offline';
+  createdAt: string;
 }

@@ -1,5 +1,6 @@
 import { Channel } from '@/domain/entities/Channel';
 import { toChannelId } from '@/domain/valueObjects/ChannelId';
+import { ValidationError } from '@/domain/errors/ValidationError';
 
 describe('Channel', () => {
   const createChannel = () => {
@@ -35,21 +36,26 @@ describe('Channel', () => {
     it('should throw error for empty name', () => {
       const channel = createChannel();
 
-      expect(() => channel.updateName('')).toThrow('Channel name cannot be empty');
-      expect(() => channel.updateName('   ')).toThrow('Channel name cannot be empty');
+      expect(() => channel.updateName('')).toThrow(ValidationError);
+      expect(() => channel.updateName('')).toThrow('name: cannot be empty');
+      expect(() => channel.updateName('   ')).toThrow(ValidationError);
+      expect(() => channel.updateName('   ')).toThrow('name: cannot be empty');
     });
 
     it('should throw error for invalid characters', () => {
       const channel = createChannel();
 
+      expect(() => channel.updateName('channel name')).toThrow(ValidationError);
       expect(() => channel.updateName('channel name')).toThrow(
-        'Channel name can only contain letters, numbers, hyphens, and underscores',
+        'name: can only contain letters, numbers, hyphens, and underscores',
       );
+      expect(() => channel.updateName('channel@name')).toThrow(ValidationError);
       expect(() => channel.updateName('channel@name')).toThrow(
-        'Channel name can only contain letters, numbers, hyphens, and underscores',
+        'name: can only contain letters, numbers, hyphens, and underscores',
       );
+      expect(() => channel.updateName('channel!name')).toThrow(ValidationError);
       expect(() => channel.updateName('channel!name')).toThrow(
-        'Channel name can only contain letters, numbers, hyphens, and underscores',
+        'name: can only contain letters, numbers, hyphens, and underscores',
       );
     });
 

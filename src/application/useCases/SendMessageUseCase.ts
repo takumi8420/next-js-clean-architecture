@@ -1,3 +1,4 @@
+import { inject, injectable } from 'inversify';
 import { IMessageRepository } from '@/domain/repositories/MessageRepository';
 import { Message } from '@/domain/entities/Message';
 import { toChannelId } from '@/domain/valueObjects/ChannelId';
@@ -8,11 +9,13 @@ import { ValidationError } from '@/domain/errors/ValidationError';
 import { MessageDto } from '@/application/dto/MessageDto';
 import { SendMessageInputDto } from '@/application/dto/SendMessageInputDto';
 import { MessageMapper } from '@/application/mappers/MessageMapper';
+import { TYPES } from '@/di/types';
 
+@injectable()
 export class SendMessageUseCase {
   constructor(
-    private readonly messageRepository: IMessageRepository,
-    private readonly clock: Clock,
+    @inject(TYPES.MessageRepository) private readonly messageRepository: IMessageRepository,
+    @inject(TYPES.Clock) private readonly clock: Clock,
   ) {}
 
   async execute(input: SendMessageInputDto): Promise<MessageDto> {

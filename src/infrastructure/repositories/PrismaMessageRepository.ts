@@ -1,11 +1,10 @@
-import { IMessageRepository } from '@/domain/repositories/MessageRepository';
-import { Message } from '@/domain/entities/Message';
-import { MessageId } from '@/domain/valueObjects/MessageId';
-import { ChannelId } from '@/domain/valueObjects/ChannelId';
-import { toMessageId } from '@/domain/valueObjects/MessageId';
-import { toUserId } from '@/domain/valueObjects/UserId';
-import { toChannelId } from '@/domain/valueObjects/ChannelId';
 import { PrismaClient } from '@prisma/client';
+
+import { Message } from '@/domain/entities/Message';
+import { IMessageRepository } from '@/domain/repositories/MessageRepository';
+import { MessageId, toMessageId } from '@/domain/valueObjects/MessageId';
+import { ChannelId, toChannelId } from '@/domain/valueObjects/ChannelId';
+import { toUserId } from '@/domain/valueObjects/UserId';
 
 export class PrismaMessageRepository implements IMessageRepository {
   constructor(private readonly prisma: PrismaClient) {}
@@ -27,14 +26,15 @@ export class PrismaMessageRepository implements IMessageRepository {
       where: { channelId },
       orderBy: { timestamp: 'asc' },
     });
-    return rows.map(row =>
-      new Message(
-        toMessageId(row.id),
-        toChannelId(row.channelId),
-        toUserId(row.userId),
-        row.content,
-        row.timestamp,
-      ),
+    return rows.map(
+      (row) =>
+        new Message(
+          toMessageId(row.id),
+          toChannelId(row.channelId),
+          toUserId(row.userId),
+          row.content,
+          row.timestamp,
+        ),
     );
   }
 

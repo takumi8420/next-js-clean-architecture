@@ -1,15 +1,21 @@
+import { ValidationError } from '../errors/ValidationError';
+
 export class Email {
-  private readonly value: string;
+  private readonly _value: string;
 
   constructor(value: string) {
     const isValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
     if (!isValid) {
-      throw new Error('Invalid email format');
+      throw new ValidationError('email', 'invalid format');
     }
-    this.value = value;
+    this._value = value;
   }
 
   toString(): string {
-    return this.value;
+    return this._value;
+  }
+
+  get value(): string {
+    return this._value;
   }
 }

@@ -1,4 +1,5 @@
 import { ChannelId } from '../valueObjects/ChannelId';
+import { ValidationError } from '../errors/ValidationError';
 
 export class Channel {
   constructor(
@@ -31,10 +32,13 @@ export class Channel {
 
   updateName(name: string): void {
     if (!name || name.trim().length === 0) {
-      throw new Error('Channel name cannot be empty');
+      throw new ValidationError('name', 'cannot be empty');
     }
     if (!/^[a-zA-Z0-9-_]+$/.test(name)) {
-      throw new Error('Channel name can only contain letters, numbers, hyphens, and underscores');
+      throw new ValidationError(
+        'name',
+        'can only contain letters, numbers, hyphens, and underscores',
+      );
     }
     this._name = name;
   }

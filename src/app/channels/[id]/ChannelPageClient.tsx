@@ -1,12 +1,13 @@
 'use client';
 
 import { useParams } from 'next/navigation';
+
 import { toChannelId } from '@/domain/valueObjects/ChannelId';
-import { useMessages } from '@/ui/hooks/useMessages';
-import { useSendMessage } from '@/ui/hooks/useSendMessage';
+import { ChannelDto } from '@/application/dto/ChannelDto';
 import { MessageList } from '@/ui/components/features/messages/MessageList';
 import { MessageInput } from '@/ui/components/features/messages/MessageInput';
-import { ChannelDto } from '@/application/dto/ChannelDto';
+import { useMessages } from '@/ui/hooks/useMessages';
+import { useSendMessage } from '@/ui/hooks/useSendMessage';
 
 interface ChannelPageClientProps {
   channel: ChannelDto;

@@ -1,7 +1,8 @@
-import { IChannelRepository } from '@/domain/repositories/ChannelRepository';
-import { Channel } from '@/domain/entities/Channel';
-import { ChannelId, toChannelId } from '@/domain/valueObjects/ChannelId';
 import { PrismaClient } from '@prisma/client';
+
+import { Channel } from '@/domain/entities/Channel';
+import { IChannelRepository } from '@/domain/repositories/ChannelRepository';
+import { ChannelId, toChannelId } from '@/domain/valueObjects/ChannelId';
 
 export class PrismaChannelRepository implements IChannelRepository {
   constructor(private readonly prisma: PrismaClient) {}
@@ -10,11 +11,11 @@ export class PrismaChannelRepository implements IChannelRepository {
     const row = await this.prisma.channel.findUnique({ where: { id } });
     if (!row) return null;
     return new Channel(
-      toChannelId(row.id), 
-      row.name, 
-      row.description || '', 
-      false, // isPrivate - デフォルトはfalse
-      row.createdAt
+      toChannelId(row.id),
+      row.name,
+      row.description || '',
+      row.isPrivate,
+      row.createdAt,
     );
   }
 
@@ -22,17 +23,32 @@ export class PrismaChannelRepository implements IChannelRepository {
     const rows = await this.prisma.channel.findMany({
       orderBy: { createdAt: 'asc' },
     });
-    return rows.map(row => new Channel(
-      toChannelId(row.id), 
-      row.name, 
-      row.description || '',
-      false, // isPrivate - デフォルトはfalse
-      row.createdAt
-    ));
+    return rows.map(
+      (row) =>
+        new Channel(
+          toChannelId(row.id),
+          row.name,
+          row.description || '',
+          row.isPrivate,
+          row.createdAt,
+        ),
+    );
   }
 
   async findPublicChannels(): Promise<Channel[]> {
-    // 現在のスキーマにはisPrivateフィールドがないため、すべてのチャンネルを返す
-    return this.findAll();
+    const rows = await this.prisma.channel.findMany({
+      where: { isPrivate: false },
+      orderBy: { createdAt: 'asc' },
+    });
+    return rows.map(
+      (row) =>
+        new Channel(
+          toChannelId(row.id),
+          row.name,
+          row.description || '',
+          row.isPrivate,
+          row.createdAt,
+        ),
+    );
   }
 }

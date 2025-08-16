@@ -1,7 +1,7 @@
 'use client';
 
-import { Sidebar } from '@/ui/components/features/channels/Sidebar';
 import { ChannelDto } from '@/application/dto/ChannelDto';
+import { Sidebar } from '@/ui/components/features/channels/Sidebar';
 
 interface ChannelsLayoutClientProps {
   channels: ChannelDto[];

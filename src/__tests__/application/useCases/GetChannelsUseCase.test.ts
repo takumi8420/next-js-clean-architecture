@@ -1,7 +1,7 @@
-import { GetChannelsUseCase } from '@/application/useCases/GetChannelsUseCase';
-import { IChannelRepository } from '@/domain/repositories/ChannelRepository';
 import { Channel } from '@/domain/entities/Channel';
+import { IChannelRepository } from '@/domain/repositories/ChannelRepository';
 import { toChannelId } from '@/domain/valueObjects/ChannelId';
+import { GetChannelsUseCase } from '@/application/useCases/GetChannelsUseCase';
 
 describe('GetChannelsUseCase', () => {
   let mockChannelRepository: jest.Mocked<IChannelRepository>;
@@ -39,7 +39,11 @@ describe('GetChannelsUseCase', () => {
 
       const result = await useCase.execute();
 
-      expect(result).toEqual(channels);
+      expect(result).toHaveLength(2);
+      expect(result[0].id).toBe('channel-1');
+      expect(result[0].name).toBe('general');
+      expect(result[1].id).toBe('channel-2');
+      expect(result[1].name).toBe('random');
       expect(mockChannelRepository.findAll).toHaveBeenCalledTimes(1);
     });
 

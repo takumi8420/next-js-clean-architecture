@@ -1,6 +1,7 @@
 import { MessageId } from '../valueObjects/MessageId';
 import { ChannelId } from '../valueObjects/ChannelId';
 import { UserId } from '../valueObjects/UserId';
+import { ValidationError } from '../errors/ValidationError';
 
 export class Message {
   constructor(
@@ -42,7 +43,7 @@ export class Message {
 
   updateContent(content: string, now: Date): void {
     if (!content || content.trim().length === 0) {
-      throw new Error('Message content cannot be empty');
+      throw new ValidationError('content', 'cannot be empty');
     }
     this._content = content.trim();
     this._updatedAt = now;

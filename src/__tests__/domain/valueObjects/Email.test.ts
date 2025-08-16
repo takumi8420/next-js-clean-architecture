@@ -1,4 +1,5 @@
 import { Email } from '@/domain/valueObjects/Email';
+import { ValidationError } from '@/domain/errors/ValidationError';
 
 describe('Email', () => {
   describe('constructor', () => {
@@ -8,11 +9,16 @@ describe('Email', () => {
     });
 
     it('should throw error for invalid email format', () => {
-      expect(() => new Email('invalid')).toThrow('Invalid email format');
-      expect(() => new Email('invalid@')).toThrow('Invalid email format');
-      expect(() => new Email('@example.com')).toThrow('Invalid email format');
-      expect(() => new Email('test@')).toThrow('Invalid email format');
-      expect(() => new Email('')).toThrow('Invalid email format');
+      expect(() => new Email('invalid')).toThrow(ValidationError);
+      expect(() => new Email('invalid')).toThrow('email: invalid format');
+      expect(() => new Email('invalid@')).toThrow(ValidationError);
+      expect(() => new Email('invalid@')).toThrow('email: invalid format');
+      expect(() => new Email('@example.com')).toThrow(ValidationError);
+      expect(() => new Email('@example.com')).toThrow('email: invalid format');
+      expect(() => new Email('test@')).toThrow(ValidationError);
+      expect(() => new Email('test@')).toThrow('email: invalid format');
+      expect(() => new Email('')).toThrow(ValidationError);
+      expect(() => new Email('')).toThrow('email: invalid format');
     });
 
     it('should accept various valid email formats', () => {

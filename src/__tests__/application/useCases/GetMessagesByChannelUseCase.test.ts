@@ -1,12 +1,12 @@
-import { GetMessagesByChannelUseCase } from '@/application/useCases/GetMessagesByChannelUseCase';
-import { IMessageRepository } from '@/domain/repositories/MessageRepository';
-import { IUserRepository } from '@/domain/repositories/UserRepository';
 import { Message } from '@/domain/entities/Message';
 import { User } from '@/domain/entities/User';
+import { IMessageRepository } from '@/domain/repositories/MessageRepository';
+import { IUserRepository } from '@/domain/repositories/UserRepository';
 import { toMessageId } from '@/domain/valueObjects/MessageId';
 import { toChannelId } from '@/domain/valueObjects/ChannelId';
 import { toUserId } from '@/domain/valueObjects/UserId';
 import { Email } from '@/domain/valueObjects/Email';
+import { GetMessagesByChannelUseCase } from '@/application/useCases/GetMessagesByChannelUseCase';
 
 describe('GetMessagesByChannelUseCase', () => {
   let mockMessageRepository: jest.Mocked<IMessageRepository>;
@@ -25,6 +25,8 @@ describe('GetMessagesByChannelUseCase', () => {
       findById: jest.fn(),
       findByEmail: jest.fn(),
       findAll: jest.fn(),
+      save: jest.fn(),
+      delete: jest.fn(),
     };
 
     useCase = new GetMessagesByChannelUseCase(mockMessageRepository, mockUserRepository);
@@ -53,8 +55,14 @@ describe('GetMessagesByChannelUseCase', () => {
         ),
       ];
 
-      const user1 = new User(userId1, new Email('user1@example.com'), 'User 1', 'online');
-      const user2 = new User(userId2, new Email('user2@example.com'), 'User 2', 'away');
+      const user1 = new User(
+        userId1,
+        new Email('user1@example.com'),
+        'User 1',
+        'online',
+        new Date(),
+      );
+      const user2 = new User(userId2, new Email('user2@example.com'), 'User 2', 'away', new Date());
 
       mockMessageRepository.findByChannelId.mockResolvedValue(messages);
       mockUserRepository.findById.mockImplementation(async (id) => {
@@ -66,8 +74,12 @@ describe('GetMessagesByChannelUseCase', () => {
       const result = await useCase.execute(channelId);
 
       expect(result).toHaveLength(2);
-      expect(result[0]).toEqual({ message: messages[0], user: user1 });
-      expect(result[1]).toEqual({ message: messages[1], user: user2 });
+      expect(result[0].message.id).toBe('msg-1');
+      expect(result[0].message.content).toBe('Hello');
+      expect(result[0].user.id).toBe('user-1');
+      expect(result[1].message.id).toBe('msg-2');
+      expect(result[1].message.content).toBe('Hi there');
+      expect(result[1].user.id).toBe('user-2');
       expect(mockMessageRepository.findByChannelId).toHaveBeenCalledWith(channelId);
       expect(mockUserRepository.findById).toHaveBeenCalledTimes(2);
     });
@@ -100,7 +112,7 @@ describe('GetMessagesByChannelUseCase', () => {
       mockMessageRepository.findByChannelId.mockResolvedValue(messages);
       mockUserRepository.findById.mockResolvedValue(null);
 
-      await expect(useCase.execute(channelId)).rejects.toThrow(`User not found: ${userId}`);
+      await expect(useCase.execute(channelId)).rejects.toThrow(`User (${userId}) not found`);
     });
 
     it('should handle repository errors', async () => {

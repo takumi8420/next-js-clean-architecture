@@ -1,9 +1,8 @@
-import { SendMessageUseCase } from '@/application/useCases/SendMessageUseCase';
 import { IMessageRepository } from '@/domain/repositories/MessageRepository';
 import { Clock } from '@/domain/time/Clock';
 import { toChannelId } from '@/domain/valueObjects/ChannelId';
 import { toUserId } from '@/domain/valueObjects/UserId';
-import { Message } from '@/domain/entities/Message';
+import { SendMessageUseCase } from '@/application/useCases/SendMessageUseCase';
 
 describe('SendMessageUseCase', () => {
   let mockMessageRepository: jest.Mocked<IMessageRepository>;
@@ -50,7 +49,7 @@ describe('SendMessageUseCase', () => {
           channelId: input.channelId,
           userId: input.userId,
           content: 'Hello, world!',
-        })
+        }),
       );
       expect(mockClock.now).toHaveBeenCalledTimes(1);
     });

@@ -1,8 +1,9 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { ChannelDto } from '@/application/dto/ChannelDto';
+
 import { getChannels } from '@/app/actions/channels';
+import { ChannelDto } from '@/application/dto/ChannelDto';
 
 export const useChannels = () => {
   const [channels, setChannels] = useState<ChannelDto[]>([]);

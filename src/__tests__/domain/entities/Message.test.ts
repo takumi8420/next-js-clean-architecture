@@ -2,6 +2,7 @@ import { Message } from '@/domain/entities/Message';
 import { toMessageId } from '@/domain/valueObjects/MessageId';
 import { toChannelId } from '@/domain/valueObjects/ChannelId';
 import { toUserId } from '@/domain/valueObjects/UserId';
+import { ValidationError } from '@/domain/errors/ValidationError';
 
 describe('Message', () => {
   const createMessage = (createdAt: Date = new Date('2024-01-01T10:00:00')) => {
@@ -44,8 +45,10 @@ describe('Message', () => {
       const message = createMessage();
       const now = new Date();
 
-      expect(() => message.updateContent('', now)).toThrow('Message content cannot be empty');
-      expect(() => message.updateContent('   ', now)).toThrow('Message content cannot be empty');
+      expect(() => message.updateContent('', now)).toThrow(ValidationError);
+      expect(() => message.updateContent('', now)).toThrow('content: cannot be empty');
+      expect(() => message.updateContent('   ', now)).toThrow(ValidationError);
+      expect(() => message.updateContent('   ', now)).toThrow('content: cannot be empty');
     });
 
     it('should trim content', () => {

@@ -1,4 +1,5 @@
 import { toUserId } from '@/domain/valueObjects/UserId';
+import { ValidationError } from '@/domain/errors/ValidationError';
 
 describe('UserId', () => {
   describe('toUserId', () => {
@@ -8,11 +9,13 @@ describe('UserId', () => {
     });
 
     it('should throw error for empty string', () => {
-      expect(() => toUserId('')).toThrow('Invalid user ID');
+      expect(() => toUserId('')).toThrow(ValidationError);
+      expect(() => toUserId('')).toThrow('userId: cannot be empty');
     });
 
     it('should throw error for whitespace only', () => {
-      expect(() => toUserId('   ')).toThrow('Invalid user ID');
+      expect(() => toUserId('   ')).toThrow(ValidationError);
+      expect(() => toUserId('   ')).toThrow('userId: cannot be empty');
     });
 
     it('should accept various valid formats', () => {

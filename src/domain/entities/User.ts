@@ -1,5 +1,6 @@
 import { UserId } from '../valueObjects/UserId';
 import { Email } from '../valueObjects/Email';
+import { ValidationError } from '../errors/ValidationError';
 
 export type UserStatus = 'online' | 'away' | 'offline';
 
@@ -9,6 +10,7 @@ export class User {
     private readonly _email: Email,
     private _name: string,
     private _status: UserStatus,
+    private readonly _createdAt: Date,
   ) {}
 
   get id(): UserId {
@@ -27,9 +29,13 @@ export class User {
     return this._status;
   }
 
+  get createdAt(): Date {
+    return this._createdAt;
+  }
+
   updateName(name: string): void {
     if (!name || name.trim().length === 0) {
-      throw new Error('Name cannot be empty');
+      throw new ValidationError('name', 'cannot be empty');
     }
     this._name = name;
   }

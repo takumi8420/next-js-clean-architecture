@@ -1,9 +1,10 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { MessageWithUserDto } from '@/application/dto/MessageWithUserDto';
+
 import { ChannelId } from '@/domain/valueObjects/ChannelId';
 import { getMessagesByChannel } from '@/app/actions/messages';
+import { MessageWithUserDto } from '@/application/dto/MessageWithUserDto';
 
 export const useMessages = (channelId: ChannelId) => {
   const [messages, setMessages] = useState<MessageWithUserDto[]>([]);

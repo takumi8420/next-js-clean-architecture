@@ -9,7 +9,14 @@ export class MockUserRepository implements IUserRepository {
 
   constructor() {
     this.users = mockUsers.map(
-      (user) => new User(toUserId(user.id), new Email(user.email), user.name, user.status),
+      (user) =>
+        new User(
+          toUserId(user.id),
+          new Email(user.email),
+          user.name,
+          user.status,
+          new Date(), // Mock用に現在時刻を設定
+        ),
     );
   }
 
@@ -25,5 +32,23 @@ export class MockUserRepository implements IUserRepository {
 
   async findAll(): Promise<User[]> {
     return [...this.users];
+  }
+
+  async save(user: User): Promise<void> {
+    const index = this.users.findIndex((u) => u.id === user.id);
+    if (index >= 0) {
+      // 既存のユーザーを更新
+      this.users[index] = user;
+    } else {
+      // 新規ユーザーを追加
+      this.users.push(user);
+    }
+  }
+
+  async delete(id: UserId): Promise<void> {
+    const index = this.users.findIndex((u) => u.id === id);
+    if (index >= 0) {
+      this.users.splice(index, 1);
+    }
   }
 }
