@@ -1,10 +1,10 @@
 import { GetChannelsUseCase } from '@/application/useCases/GetChannelsUseCase';
-import { ChannelRepository } from '@/domain/repositories/ChannelRepository';
+import { IChannelRepository } from '@/domain/repositories/ChannelRepository';
 import { Channel } from '@/domain/entities/Channel';
 import { toChannelId } from '@/domain/valueObjects/ChannelId';
 
 describe('GetChannelsUseCase', () => {
-  let mockChannelRepository: jest.Mocked<ChannelRepository>;
+  let mockChannelRepository: jest.Mocked<IChannelRepository>;
   let useCase: GetChannelsUseCase;
 
   beforeEach(() => {

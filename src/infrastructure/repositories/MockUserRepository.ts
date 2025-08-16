@@ -1,10 +1,10 @@
-import { UserRepository } from '@/domain/repositories/UserRepository';
+import { IUserRepository } from '@/domain/repositories/UserRepository';
 import { User } from '@/domain/entities/User';
 import { UserId, toUserId } from '@/domain/valueObjects/UserId';
 import { Email } from '@/domain/valueObjects/Email';
 import { mockUsers } from '@/mock/data';
 
-export class MockUserRepository implements UserRepository {
+export class MockUserRepository implements IUserRepository {
   private users: User[];
 
   constructor() {

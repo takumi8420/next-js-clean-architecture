@@ -1,13 +1,12 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useAppServices } from '@/di/clientContainer';
-import { MessageWithUser } from '@/application/useCases/GetMessagesByChannelUseCase';
+import { MessageWithUserDto } from '@/application/dto/MessageWithUserDto';
 import { ChannelId } from '@/domain/valueObjects/ChannelId';
+import { getMessagesByChannel } from '@/app/actions/messages';
 
 export const useMessages = (channelId: ChannelId) => {
-  const { getMessagesByChannelUseCase } = useAppServices();
-  const [messages, setMessages] = useState<MessageWithUser[]>([]);
+  const [messages, setMessages] = useState<MessageWithUserDto[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
@@ -15,7 +14,7 @@ export const useMessages = (channelId: ChannelId) => {
     const fetchMessages = async () => {
       try {
         setLoading(true);
-        const result = await getMessagesByChannelUseCase.execute(channelId);
+        const result = await getMessagesByChannel(channelId);
         setMessages(result);
       } catch (err) {
         setError(err instanceof Error ? err : new Error('Failed to fetch messages'));
@@ -25,10 +24,10 @@ export const useMessages = (channelId: ChannelId) => {
     };
 
     fetchMessages();
-  }, [channelId, getMessagesByChannelUseCase]);
+  }, [channelId]);
 
   const refresh = async () => {
-    const result = await getMessagesByChannelUseCase.execute(channelId);
+    const result = await getMessagesByChannel(channelId);
     setMessages(result);
   };
 

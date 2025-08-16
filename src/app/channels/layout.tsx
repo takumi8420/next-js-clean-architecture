@@ -1,5 +1,5 @@
-import { ChannelsLayoutClient } from './ChannelsLayoutClient';
+import ChannelsLayoutServer from './ChannelsLayoutServer';
 
 export default function ChannelsLayout({ children }: { children: React.ReactNode }) {
-  return <ChannelsLayoutClient>{children}</ChannelsLayoutClient>;
+  return <ChannelsLayoutServer>{children}</ChannelsLayoutServer>;
 }

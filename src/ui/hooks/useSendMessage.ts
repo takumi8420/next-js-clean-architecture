@@ -1,25 +1,22 @@
 'use client';
 
 import { useState } from 'react';
-import { useAppServices } from '@/di/clientContainer';
-import { ChannelId } from '@/domain/valueObjects/ChannelId';
-import { UserId } from '@/domain/valueObjects/UserId';
-import { Message } from '@/domain/entities/Message';
+import { MessageDto } from '@/application/dto/MessageDto';
+import { sendMessage as sendMessageAction } from '@/app/actions/messages';
 
 export const useSendMessage = () => {
-  const { sendMessageUseCase } = useAppServices();
   const [sending, setSending] = useState(false);
   const [error, setError] = useState<Error | null>(null);
 
   const sendMessage = async (
-    channelId: ChannelId,
-    userId: UserId,
+    channelId: string,
+    userId: string,
     content: string,
-  ): Promise<Message | null> => {
+  ): Promise<MessageDto | null> => {
     try {
       setSending(true);
       setError(null);
-      const message = await sendMessageUseCase.execute({
+      const message = await sendMessageAction({
         channelId,
         userId,
         content,

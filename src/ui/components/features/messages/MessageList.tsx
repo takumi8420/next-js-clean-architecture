@@ -1,9 +1,9 @@
 import React, { useEffect, useRef } from 'react';
-import { MessageWithUser } from '@/application/useCases/GetMessagesByChannelUseCase';
+import { MessageWithUserDto } from '@/application/dto/MessageWithUserDto';
 import { MessageItem } from './MessageItem';
 
 interface MessageListProps {
-  messages: MessageWithUser[];
+  messages: MessageWithUserDto[];
   channelName: string;
 }
 

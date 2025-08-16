@@ -1,11 +1,11 @@
-import { MessageRepository } from '@/domain/repositories/MessageRepository';
+import { IMessageRepository } from '@/domain/repositories/MessageRepository';
 import { Message } from '@/domain/entities/Message';
 import { MessageId, toMessageId } from '@/domain/valueObjects/MessageId';
 import { ChannelId, toChannelId } from '@/domain/valueObjects/ChannelId';
 import { toUserId } from '@/domain/valueObjects/UserId';
 import { mockMessages } from '@/mock/data';
 
-export class MockMessageRepository implements MessageRepository {
+export class MockMessageRepository implements IMessageRepository {
   private messages: Message[];
 
   constructor() {

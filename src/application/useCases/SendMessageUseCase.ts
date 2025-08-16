@@ -1,25 +1,23 @@
-import { MessageRepository } from '@/domain/repositories/MessageRepository';
+import { IMessageRepository } from '@/domain/repositories/MessageRepository';
 import { Message } from '@/domain/entities/Message';
-import { ChannelId } from '@/domain/valueObjects/ChannelId';
-import { UserId } from '@/domain/valueObjects/UserId';
+import { toChannelId } from '@/domain/valueObjects/ChannelId';
+import { toUserId } from '@/domain/valueObjects/UserId';
 import { toMessageId } from '@/domain/valueObjects/MessageId';
 import { Clock } from '@/domain/time/Clock';
-
-export interface SendMessageInput {
-  channelId: ChannelId;
-  userId: UserId;
-  content: string;
-}
+import { ValidationError } from '@/domain/errors/ValidationError';
+import { MessageDto } from '@/application/dto/MessageDto';
+import { SendMessageInputDto } from '@/application/dto/SendMessageInputDto';
+import { MessageMapper } from '@/application/mappers/MessageMapper';
 
 export class SendMessageUseCase {
   constructor(
-    private readonly messageRepository: MessageRepository,
+    private readonly messageRepository: IMessageRepository,
     private readonly clock: Clock,
   ) {}
 
-  async execute(input: SendMessageInput): Promise<Message> {
+  async execute(input: SendMessageInputDto): Promise<MessageDto> {
     if (!input.content || input.content.trim().length === 0) {
-      throw new Error('Message content cannot be empty');
+      throw new ValidationError('content', 'Message content cannot be empty');
     }
 
     const messageId = toMessageId(`msg-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`);
@@ -27,14 +25,14 @@ export class SendMessageUseCase {
 
     const message = new Message(
       messageId,
-      input.channelId,
-      input.userId,
+      toChannelId(input.channelId),
+      toUserId(input.userId),
       input.content.trim(),
       now,
     );
 
     await this.messageRepository.save(message);
 
-    return message;
+    return MessageMapper.toDto(message);
   }
 }

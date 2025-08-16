@@ -1,6 +1,6 @@
 import { GetMessagesByChannelUseCase } from '@/application/useCases/GetMessagesByChannelUseCase';
-import { MessageRepository } from '@/domain/repositories/MessageRepository';
-import { UserRepository } from '@/domain/repositories/UserRepository';
+import { IMessageRepository } from '@/domain/repositories/MessageRepository';
+import { IUserRepository } from '@/domain/repositories/UserRepository';
 import { Message } from '@/domain/entities/Message';
 import { User } from '@/domain/entities/User';
 import { toMessageId } from '@/domain/valueObjects/MessageId';
@@ -9,8 +9,8 @@ import { toUserId } from '@/domain/valueObjects/UserId';
 import { Email } from '@/domain/valueObjects/Email';
 
 describe('GetMessagesByChannelUseCase', () => {
-  let mockMessageRepository: jest.Mocked<MessageRepository>;
-  let mockUserRepository: jest.Mocked<UserRepository>;
+  let mockMessageRepository: jest.Mocked<IMessageRepository>;
+  let mockUserRepository: jest.Mocked<IUserRepository>;
   let useCase: GetMessagesByChannelUseCase;
 
   beforeEach(() => {

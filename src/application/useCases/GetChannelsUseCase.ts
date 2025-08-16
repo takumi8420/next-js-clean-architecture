@@ -1,10 +1,12 @@
-import { ChannelRepository } from '@/domain/repositories/ChannelRepository';
-import { Channel } from '@/domain/entities/Channel';
+import { IChannelRepository } from '@/domain/repositories/ChannelRepository';
+import { ChannelDto } from '@/application/dto/ChannelDto';
+import { ChannelMapper } from '@/application/mappers/ChannelMapper';
 
 export class GetChannelsUseCase {
-  constructor(private readonly channelRepository: ChannelRepository) {}
+  constructor(private readonly channelRepository: IChannelRepository) {}
 
-  async execute(): Promise<Channel[]> {
-    return await this.channelRepository.findAll();
+  async execute(): Promise<ChannelDto[]> {
+    const channels = await this.channelRepository.findAll();
+    return ChannelMapper.toDtoArray(channels);
   }
 }

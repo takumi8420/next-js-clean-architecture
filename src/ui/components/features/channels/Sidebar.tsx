@@ -3,10 +3,10 @@
 import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Channel } from '@/domain/entities/Channel';
+import { ChannelDto } from '@/application/dto/ChannelDto';
 
 interface SidebarProps {
-  channels: Channel[];
+  channels: ChannelDto[];
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({ channels }) => {
@@ -32,7 +32,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ channels }) => {
                     ${currentChannelId === channel.id ? 'bg-gray-700' : ''}
                   `}
                 >
-                  <span className="text-gray-400 mr-2">{channel.isPrivate ? '🔒' : '#'}</span>
+                  <span className="text-gray-400 mr-2">#</span>
                   <span className="truncate">{channel.name}</span>
                 </Link>
               </li>

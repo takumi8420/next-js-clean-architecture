@@ -288,50 +288,57 @@ export class PrismaUserRepository implements UserRepository {
 }
 ```
 
-#### HTTP リポジトリ（Client側アダプタ）
+#### Client側でのデータ取得（Server Actions経由）
 
-* Server Action / API Route を叩いて DTO を取得し、Domain へ再構築。
+* Server Actionsを直接呼び出してDTOを取得し、UI層で使用。
 
 ```ts
-// infrastructure/http/HttpUserRepository.ts
-import { UserRepository } from '@/domain/repositories/UserRepository';
-import { User } from '@/domain/entities/User';
-import { Email } from '@/domain/valueObjects/Email';
-import { UserId, toUserId } from '@/domain/valueObjects/UserId';
+// ui/hooks/useUser.ts
+'use client';
 
-export class HttpUserRepository implements UserRepository {
-  async findById(id: UserId): Promise<User | null> {
-    const res = await fetch(`/api/users/${id}`, { cache: 'no-store' });
-    if (res.status === 404) return null;
-    const dto = await res.json(); // { id, email, name, createdAt }
-    return new User(toUserId(dto.id), new Email(dto.email), dto.name, new Date(dto.createdAt));
-  }
-  async findByEmail(email: Email): Promise<User | null> {
-    const res = await fetch(`/api/users?email=${encodeURIComponent(email.toString())}`);
-    if (res.status === 404) return null;
-    const dto = await res.json();
-    return new User(toUserId(dto.id), new Email(dto.email), dto.name, new Date(dto.createdAt));
-  }
-  async save(_: User): Promise<void> {
-    throw new Error('Not supported on client. Use Server Action.');
-  }
-  async delete(_: UserId): Promise<void> {
-    throw new Error('Not supported on client. Use Server Action.');
-  }
-}
+import { useState, useEffect } from 'react';
+import { UserDto } from '@/application/dto/UserDto';
+import { getUser } from '@/app/actions/users';
+
+export const useUser = (userId: string) => {
+  const [user, setUser] = useState<UserDto | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<Error | null>(null);
+
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        setLoading(true);
+        const result = await getUser(userId);
+        setUser(result);
+      } catch (err) {
+        setError(err instanceof Error ? err : new Error('Failed to fetch user'));
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUser();
+  }, [userId]);
+
+  return { user, loading, error };
+};
 ```
 
-#### API ルート（例）
+#### Server Actions（例）
 
 ```ts
-// infrastructure/http/routes.ts (例: app/api/users/[id]/route.ts)
-import { NextResponse } from 'next/server';
-import { prisma } from '@/infrastructure/prisma/client';
+// app/actions/users.ts
+'use server';
 
-export async function GET(_: Request, { params }: { params: { id: string }}) {
-  const user = await prisma.user.findUnique({ where: { id: params.id } });
-  if (!user) return NextResponse.json({ message: 'Not found' }, { status: 404 });
-  return NextResponse.json(user);
+import { createServerContainer } from '@/di/serverContainer';
+import { UserDto } from '@/application/dto/UserDto';
+import { toUserId } from '@/domain/valueObjects/UserId';
+
+export async function getUser(id: string): Promise<UserDto | null> {
+  const { getUserUseCase } = createServerContainer();
+  const user = await getUserUseCase.execute(toUserId(id));
+  return user;
 }
 ```
 
@@ -490,21 +497,14 @@ export function createServerContainer() {
 }
 ```
 
-#### クライアントDI（HTTP実装をバインド）
+#### クライアント側のデータ取得
 
 ```ts
-// di/clientContainer.ts
-'use client';
-import { HttpUserRepository } from '@/infrastructure/http/HttpUserRepository';
-import { GetUserProfileUseCase } from '@/application/useCases/GetUserProfileUseCase';
-
-const services = {
-  getUserProfileUseCase: new GetUserProfileUseCase(new HttpUserRepository()),
-};
-export const useAppServices = () => services;
+// クライアント側ではServer Actionsを直接呼び出し
+// DIコンテナは不要となり、HooksからServer Actionsを使用
 ```
 
-> 原則：**Prisma/DBアクセスはサーバのみ**。クライアントはHTTP/Server Action経由のアダプタで同じポートを満たす。
+> 原則：**Prisma/DBアクセスはサーバのみ**。クライアントはServer Actions経由でデータを取得。
 
 ---
 
@@ -805,7 +805,7 @@ export const RegisterForm = () => {
 ### 例2：プロフィール取得（Server/Client両対応）
 
 * **Serverページ**は `serverContainer` でUseCase実行（DB直）
-* **Client Hook** は `clientContainer` でHTTP実装を通じて同じUseCaseを呼ぶ
+* **Client Hook** は Server Actions を呼び出してデータ取得
 
 ---
 

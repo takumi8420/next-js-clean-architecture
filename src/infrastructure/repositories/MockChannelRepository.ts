@@ -1,9 +1,9 @@
-import { ChannelRepository } from '@/domain/repositories/ChannelRepository';
+import { IChannelRepository } from '@/domain/repositories/ChannelRepository';
 import { Channel } from '@/domain/entities/Channel';
 import { ChannelId, toChannelId } from '@/domain/valueObjects/ChannelId';
 import { mockChannels } from '@/mock/data';
 
-export class MockChannelRepository implements ChannelRepository {
+export class MockChannelRepository implements IChannelRepository {
   private channels: Channel[];
 
   constructor() {
